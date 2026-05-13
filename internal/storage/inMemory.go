@@ -34,3 +34,13 @@ func (i *InMemoryStore) Get(ctx context.Context, id string) (models.IncidentData
 	}
 	return data, nil
 }
+
+func (i *InMemoryStore) GetAll(ctx context.Context) ([]models.IncidentData, error) {
+	i.Mu.RLock()
+	defer i.Mu.RUnlock()
+	incidents := make([]models.IncidentData, 0, len(i.Incidents))
+	for _, incident := range i.Incidents {
+		incidents = append(incidents, incident)
+	}
+	return incidents, nil
+}

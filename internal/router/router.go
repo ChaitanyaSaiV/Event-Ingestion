@@ -11,6 +11,7 @@ func Routes(path string, handler *handlers.IncidentHandler) {
 	r.HandleFunc("GET /healthCheck", handlers.HealthCheck)
 	r.HandleFunc("POST /incident", handler.SaveIncident)
 	r.HandleFunc("GET /incident/{id}", handler.GetIncident)
+	r.HandleFunc("GET /getAllIncidents", handler.GetAllIncidents)
 
 	http.ListenAndServe(path, r)
 }
