@@ -54,6 +54,7 @@ func (h *IncidentHandler) SaveIncident(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Missing Required Fields"))
+		return
 	}
 
 	h.store.Save(r.Context(), &incident)
@@ -67,8 +68,7 @@ func (h *IncidentHandler) GetIncident(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	data, err := h.store.Get(r.Context(), id)
 	if err != nil {
-
-		http.Error(w, "No record found with supplied ID", http.StatusBadRequest)
+		http.Error(w, "No record found with supplied ID", http.StatusNotFound)
 		return
 	}
 

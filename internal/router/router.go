@@ -9,9 +9,9 @@ import (
 func Routes(path string, handler *handlers.IncidentHandler) {
 	r := http.NewServeMux()
 	r.HandleFunc("GET /healthCheck", handlers.HealthCheck)
-	r.HandleFunc("POST /incident", handler.SaveIncident)
-	r.HandleFunc("GET /incident/{id}", handler.GetIncident)
-	r.HandleFunc("GET /getAllIncidents", handler.GetAllIncidents)
+	r.HandleFunc("POST /incidents", handler.SaveIncident)
+	r.HandleFunc("GET /incidents/{id}", handler.GetIncident)
+	r.HandleFunc("GET /incidents", handler.GetAllIncidents)
 
 	http.ListenAndServe(path, r)
 }

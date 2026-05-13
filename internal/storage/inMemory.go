@@ -9,26 +9,26 @@ import (
 )
 
 type InMemoryStore struct {
-	Mu        sync.RWMutex
-	Incidents map[string]models.IncidentData
+	mu        sync.RWMutex
+	incidents map[string]models.IncidentData
 }
 
 func NewInMemoryStore() *InMemoryStore {
 	return &InMemoryStore{
-		Incidents: make(map[string]models.IncidentData),
+		incidents: make(map[string]models.IncidentData),
 	}
 }
 
 func (i *InMemoryStore) Save(ctx context.Context, incident *models.IncidentData) {
-	i.Mu.Lock()
-	defer i.Mu.Unlock()
-	i.Incidents[incident.Id] = *incident
+	i.mu.Lock()
+	defer i.mu.Unlock()
+	i.incidents[incident.Id] = *incident
 }
 
 func (i *InMemoryStore) Get(ctx context.Context, id string) (models.IncidentData, error) {
-	i.Mu.RLock()
-	defer i.Mu.RUnlock()
-	data, ok := i.Incidents[id]
+	i.mu.RLock()
+	defer i.mu.RUnlock()
+	data, ok := i.incidents[id]
 	if !ok {
 		return models.IncidentData{}, fmt.Errorf("Record not found")
 	}
@@ -36,10 +36,10 @@ func (i *InMemoryStore) Get(ctx context.Context, id string) (models.IncidentData
 }
 
 func (i *InMemoryStore) GetAll(ctx context.Context) ([]models.IncidentData, error) {
-	i.Mu.RLock()
-	defer i.Mu.RUnlock()
-	incidents := make([]models.IncidentData, 0, len(i.Incidents))
-	for _, incident := range i.Incidents {
+	i.mu.RLock()
+	defer i.mu.RUnlock()
+	incidents := make([]models.IncidentData, 0, len(i.incidents))
+	for _, incident := range i.incidents {
 		incidents = append(incidents, incident)
 	}
 	return incidents, nil
