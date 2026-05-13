@@ -3,10 +3,12 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"time"
 
 	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/models"
+	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/storage"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -68,7 +70,11 @@ func (h *IncidentHandler) GetIncident(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	data, err := h.store.Get(r.Context(), id)
 	if err != nil {
-		http.Error(w, "No record found with supplied ID", http.StatusNotFound)
+		if errors.Is(err, storage.ErrNotFound) {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 

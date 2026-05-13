@@ -8,6 +8,8 @@ import (
 	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/models"
 )
 
+var ErrNotFound = fmt.Errorf("Incident Record Not Found")
+
 type InMemoryStore struct {
 	mu        sync.RWMutex
 	incidents map[string]models.IncidentData
@@ -30,7 +32,7 @@ func (i *InMemoryStore) Get(ctx context.Context, id string) (models.IncidentData
 	defer i.mu.RUnlock()
 	data, ok := i.incidents[id]
 	if !ok {
-		return models.IncidentData{}, fmt.Errorf("Record not found")
+		return models.IncidentData{}, ErrNotFound
 	}
 	return data, nil
 }
