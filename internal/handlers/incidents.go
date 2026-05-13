@@ -16,6 +16,7 @@ var validate = validator.New()
 type IncidentStore interface {
 	Save(ctx context.Context, incident *models.IncidentData)
 	Get(ctx context.Context, id string) (models.IncidentData, error)
+	GetAll(ctx context.Context) ([]models.IncidentData, error)
 }
 
 // 2. Create the handler struct that holds the database
@@ -53,6 +54,7 @@ func (h *IncidentHandler) SaveIncident(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Missing Required Fields"))
+		return
 	}
 
 	h.store.Save(r.Context(), &incident)
@@ -66,14 +68,26 @@ func (h *IncidentHandler) GetIncident(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	data, err := h.store.Get(r.Context(), id)
 	if err != nil {
-
-		http.Error(w, "No record found with supplied ID", http.StatusBadRequest)
+		http.Error(w, "No record found with supplied ID", http.StatusNotFound)
 		return
 	}
 
 	err = json.NewEncoder(w).Encode(&data)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h *IncidentHandler) GetAllIncidents(w http.ResponseWriter, r *http.Request) {
+	data, err := h.store.GetAll(r.Context())
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	err = json.NewEncoder(w).Encode(data)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 }
