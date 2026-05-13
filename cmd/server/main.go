@@ -1,17 +1,15 @@
 package main
 
 import (
-	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/db"
-	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/handler"
+	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/handlers"
 	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/router"
+	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/storage"
 )
 
 func main() {
 
-	store := db.NewInMemoryStore()
+	memoryStore := storage.NewInMemoryStore()
 
-	app := &handler.App{
-		Incidents: store,
-	}
-	router.NewRouter(":8080", app)
+	handler := handlers.NewIncidentHandler(memoryStore)
+	router.Routes(":8080", handler)
 }
