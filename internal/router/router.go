@@ -2,25 +2,15 @@ package router
 
 import (
 	"net/http"
-	"time"
 
-	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/handler"
+	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/handlers"
 )
 
-func NewRouter(path string, app *handler.App) {
+func Routes(path string, handler *handlers.IncidentHandler) {
+	r := http.NewServeMux()
+	r.HandleFunc("GET /healthCheck", handlers.HealthCheck)
+	r.HandleFunc("POST /incident", handler.SaveIncident)
+	r.HandleFunc("GET /incident/{id}", handler.GetIncident)
 
-	router := http.NewServeMux()
-	router.HandleFunc("GET /healthCheck", handler.HealthCheck)
-	router.HandleFunc("GET /incident/{id}", app.GetIncident)
-	router.HandleFunc("POST /incident", app.PostIncident)
-
-	s := &http.Server{
-		Addr:           path,
-		Handler:        router,
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 20,
-	}
-
-	s.ListenAndServe()
+	http.ListenAndServe(path, r)
 }

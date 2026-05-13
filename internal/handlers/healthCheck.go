@@ -1,4 +1,4 @@
-package handler
+package handlers
 
 import (
 	"encoding/json"
@@ -9,10 +9,9 @@ import (
 )
 
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
-	data, _ := json.Marshal(models.HealthCheck{
-		Health:    "OK",
+	responseData := &models.HealthCheck{
+		Status:    "Okay",
 		TimeStamp: time.Now(),
-	})
-
-	w.Write(data)
+	}
+	json.NewEncoder(w).Encode(responseData)
 }
