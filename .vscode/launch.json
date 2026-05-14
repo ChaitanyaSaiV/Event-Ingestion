@@ -2,13 +2,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Run Server",
+            "name": "Run Server (Memory)",
             "type": "go",
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/cmd/server",
             "env": {},
-            "args": []
+            "args": ["--store=memory"]
+        },
+        {
+            "name": "Run Server (File)",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/server",
+            "env": {},
+            "args": ["--store=file"]
         },
         {
             "name": "Debug Current Test",
