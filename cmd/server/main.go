@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"flag"
 	"log"
 	"net/http"
 	"os"
@@ -21,11 +22,20 @@ func main() {
 	// ─────────────────────────────────────────────────────
 
 	// Create the storage layer
-	//memoryStore := storage.NewInMemoryStore()
-
-	store, err := storage.NewFileStorage("incidents.json")
-	if err != nil {
-		log.Fatalf("failed to create store: %v", err)
+	storeType := flag.String("store", "memory", "store backend: memory or file")
+	flag.Parse()
+	var store handlers.IncidentStore
+	switch *storeType {
+	case "memory":
+		store = storage.NewInMemoryStore()
+	case "file":
+		fs, err := storage.NewFileStorage("incidents.json")
+		if err != nil {
+			log.Fatal(err)
+		}
+		store = fs
+	default:
+		log.Fatalf("unknown store type: %s", *storeType)
 	}
 
 	// Create the handler, inject the store
