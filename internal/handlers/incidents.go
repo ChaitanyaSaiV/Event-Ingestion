@@ -3,10 +3,12 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"time"
 
 	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/models"
+	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/storage"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -17,6 +19,7 @@ type IncidentStore interface {
 	Save(ctx context.Context, incident *models.IncidentData)
 	Get(ctx context.Context, id string) (models.IncidentData, error)
 	GetAll(ctx context.Context) ([]models.IncidentData, error)
+	Delete(ctx context.Context, id string) error
 }
 
 // 2. Create the handler struct that holds the database
@@ -90,4 +93,20 @@ func (h *IncidentHandler) GetAllIncidents(w http.ResponseWriter, r *http.Request
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+}
+
+func (h *IncidentHandler) DeleteIncident(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	err := h.store.Delete(r.Context(), id)
+	if err != nil {
+		if errors.Is(err, storage.ErrNotFound) {
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("No record found with supplied id"))
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error with deleting the record"))
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+	return
 }

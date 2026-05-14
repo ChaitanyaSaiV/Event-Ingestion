@@ -76,7 +76,7 @@ func main() {
 	quit := make(chan os.Signal, 1)
 
 	// Tell Go: "when these signals come in, send them to my 'quit' channel"
-	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+	signal.Notify(quit, os.Interrupt, syscall.SIGINT)
 
 	// ─────────────────────────────────────────────────────
 	// STEP 4: Block here until a signal arrives

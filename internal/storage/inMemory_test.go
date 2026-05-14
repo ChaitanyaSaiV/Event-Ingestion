@@ -112,3 +112,27 @@ func TestInMemoryStore_GetAll_Non_Empty(t *testing.T) {
 		t.Errorf("Expected 1 records but got 0")
 	}
 }
+
+func TestDeleteRecord(t *testing.T) {
+	store := NewInMemoryStore()
+	ctx := context.Background()
+	incident := &models.IncidentData{
+		Id:       "1",
+		Severity: "SEV1",
+		Message:  "Very Severe",
+	}
+
+	store.Save(ctx, incident)
+	id := incident.Id
+	err := store.Delete(ctx, incident.Id)
+
+	if err != nil {
+		t.Fatal("Error while deleting the record")
+	}
+
+	_, err = store.Get(ctx, id)
+
+	if !errors.Is(err, ErrNotFound) {
+		t.Fatal("Error is not what is expected")
+	}
+}

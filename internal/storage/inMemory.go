@@ -46,3 +46,14 @@ func (i *InMemoryStore) GetAll(ctx context.Context) ([]models.IncidentData, erro
 	}
 	return incidents, nil
 }
+
+func (i *InMemoryStore) Delete(ctx context.Context, id string) error {
+	i.mu.Lock()
+	defer i.mu.Unlock()
+	_, ok := i.incidents[id]
+	if !ok {
+		return ErrNotFound
+	}
+	delete(i.incidents, id)
+	return nil
+}
