@@ -21,7 +21,12 @@ func main() {
 	// ─────────────────────────────────────────────────────
 
 	// Create the storage layer
-	store := storage.NewInMemoryStore()
+	//memoryStore := storage.NewInMemoryStore()
+
+	store, err := storage.NewFileStorage("incidents.json")
+	if err != nil {
+		log.Fatalf("failed to create store: %v", err)
+	}
 
 	// Create the handler, inject the store
 	handler := handlers.NewIncidentHandler(store)
