@@ -13,6 +13,7 @@ func NewServer(path string, handler *handlers.IncidentHandler) *http.Server {
 	r.HandleFunc("POST /incidents", handler.SaveIncident)
 	r.HandleFunc("GET /incidents/{id}", handler.GetIncident)
 	r.HandleFunc("GET /incidents", handler.GetAllIncidents)
+	r.HandleFunc("DELETE /incidents/{id}", handler.DeleteIncident)
 
 	return &http.Server{
 		Addr:         path,

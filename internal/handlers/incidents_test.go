@@ -39,6 +39,10 @@ func (m *mockStore) GetAll(ctx context.Context) ([]models.IncidentData, error) {
 	return m.allData, m.allErr
 }
 
+func (m *mockStore) Delete(ctx context.Context, id string) error {
+	return nil
+}
+
 // Compile-time check: ensures mockStore satisfies IncidentStore.
 // If you change the interface and forget to update the mock, this fails to compile.
 var _ IncidentStore = (*mockStore)(nil)
