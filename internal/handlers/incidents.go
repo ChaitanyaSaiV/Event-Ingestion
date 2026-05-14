@@ -16,9 +16,17 @@ var validate = validator.New()
 
 // 1. Define the interface your handler needs
 type IncidentStore interface {
-	Save(ctx context.Context, incident *models.IncidentData)
+	IncidentReader
+	IncidentWriter
+}
+
+type IncidentReader interface {
 	Get(ctx context.Context, id string) (models.IncidentData, error)
 	GetAll(ctx context.Context) ([]models.IncidentData, error)
+}
+
+type IncidentWriter interface {
+	Save(ctx context.Context, incident *models.IncidentData)
 	Delete(ctx context.Context, id string) error
 }
 
