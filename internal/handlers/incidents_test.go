@@ -10,6 +10,7 @@ import (
 
 	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/models"
 	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/storage"
+	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/store"
 )
 
 // mockStore is a fake IncidentStore used in tests.
@@ -45,7 +46,7 @@ func (m *mockStore) Delete(ctx context.Context, id string) error {
 
 // Compile-time check: ensures mockStore satisfies IncidentStore.
 // If you change the interface and forget to update the mock, this fails to compile.
-var _ IncidentStore = (*mockStore)(nil)
+var _ store.IncidentStore = (*mockStore)(nil)
 
 func TestSaveIncident_Success(t *testing.T) {
 	// Arrange

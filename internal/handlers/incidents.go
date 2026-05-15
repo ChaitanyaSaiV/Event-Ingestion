@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -9,34 +8,19 @@ import (
 
 	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/models"
 	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/storage"
+	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/store"
 	"github.com/go-playground/validator/v10"
 )
 
 var validate = validator.New()
 
-// 1. Define the interface your handler needs
-type IncidentStore interface {
-	IncidentReader
-	IncidentWriter
-}
-
-type IncidentReader interface {
-	Get(ctx context.Context, id string) (models.IncidentData, error)
-	GetAll(ctx context.Context) ([]models.IncidentData, error)
-}
-
-type IncidentWriter interface {
-	Save(ctx context.Context, incident *models.IncidentData)
-	Delete(ctx context.Context, id string) error
-}
-
 // 2. Create the handler struct that holds the database
 type IncidentHandler struct {
-	store IncidentStore
+	store store.IncidentStore
 }
 
 // 3. Create a constructor to initialize the handler
-func NewIncidentHandler(s IncidentStore) *IncidentHandler {
+func NewIncidentHandler(s store.IncidentStore) *IncidentHandler {
 	return &IncidentHandler{
 		store: s,
 	}
