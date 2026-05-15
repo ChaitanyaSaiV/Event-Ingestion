@@ -14,6 +14,7 @@ import (
 	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/handlers"
 	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/router"
 	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/storage"
+	"github.com/ChaitanyaSaiV/Event-Ingestion/internal/store"
 )
 
 func main() {
@@ -24,7 +25,7 @@ func main() {
 	// Create the storage layer
 	storeType := flag.String("store", "memory", "store backend: memory or file")
 	flag.Parse()
-	var store handlers.IncidentStore
+	var store store.IncidentStore
 	switch *storeType {
 	case "memory":
 		store = storage.NewInMemoryStore()
@@ -38,8 +39,10 @@ func main() {
 		log.Fatalf("unknown store type: %s", *storeType)
 	}
 
+	loggingStore := storage.NewLoggingStore(store)
+
 	// Create the handler, inject the store
-	handler := handlers.NewIncidentHandler(store)
+	handler := handlers.NewIncidentHandler(loggingStore)
 
 	// Get the configured server (router.NewServer returns *http.Server)
 	server := router.NewServer(":8080", handler)
